@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Gestão de Leads — Farmácias F. da Silva Graça</title>
+  <style>
+    :root {
+      --primary: #a581b9;
+      --primary-dark: #825f96;
+      --primary-light: #f4eff7;
+      --text-main: #1f2937;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f9fafb;
+      color: var(--text-main);
+      padding: 24px 20px;
+    }
+    .header {
+      max-width: 1200px;
+      margin: 0 auto 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-left img {
+      max-height: 50px;
+    }
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .header-title p {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary-dark);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: #6e4e80;
+    }
+    .btn-secondary {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: #374151;
+    }
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+    .card {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .card-bar {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .search-input {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      width: 280px;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+    .stats-badge {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: var(--primary-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    th {
+      background: #f9fafb;
+      padding: 12px 16px;
+      font-weight: 600;
+      color: #4b5563;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      color: #1f2937;
+    }
+    tr:hover td {
+      background: #faf8fc;
+    }
+    .pin-badge {
+      display: inline-block;
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--primary-dark);
+      background: var(--primary-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .empty-state {
+      padding: 48px 20px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <img src="/images/logo.png" alt="Logo">
+      <div class="header-title">
+        <h1>Painel de Leads — Feira de Exposições</h1>
+        <p>Farmácias F. da Silva Graça &bull; Soluções para Lares e ERPI</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btnRefresh" class="btn btn-secondary">🔄 Atualizar</button>
+      <a href="/admin/export-csv" class="btn btn-primary">📥 Descarregar Excel / CSV</a>
+    </div>
+  </header>
+
+  <main class="card">
+    <div class="card-bar">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar instituição, nome ou PIN...">
+      <div id="statsBadge" class="stats-badge">Total: 0 instituições</div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Instituição / Lar</th>
+            <th>Localidade</th>
+            <th>Responsável</th>
+            <th>Cargo</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Área de Interesse</th>
+            <th>PIN Roleta</th>
+          </tr>
+        </thead>
+        <tbody id="leadsTableBody">
+          <tr>
+            <td colspan="9" class="empty-state">A carregar registos...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const leadsTableBody = document.getElementById('leadsTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const statsBadge = document.getElementById('statsBadge');
+    const btnRefresh = document.getElementById('btnRefresh');
+
+    let allLeads = [];
+
+    async function loadLeads(search = '') {
+      try {
+        const url = search ? `/admin/api/leads?search=${encodeURIComponent(search)}` : '/admin/api/leads';
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.success) {
+          allLeads = data.leads;
+          renderTable(allLeads);
+        } else {
+          leadsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Erro ao carregar dados: ${data.message}</td></tr>`;
+        }
+      } catch (err) {
+        leadsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Erro de ligação ao servidor.</td></tr>`;
+      }
+    }
+
+    function renderTable(leads) {
+      statsBadge.textContent = `Total: ${leads.length} instituições`;
+
+      if (leads.length === 0) {
+        leadsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Nenhum registo encontrado.</td></tr>`;
+        return;
+      }
+
+      leadsTableBody.innerHTML = leads.map(l => {
+        const date = new Date(l.created_at).toLocaleString('pt-PT');
+        return `
+          <tr>
+            <td>${date}</td>
+            <td><strong>${escapeHtml(l.institution_name)}</strong></td>
+            <td>${escapeHtml(l.location)}</td>
+            <td>${escapeHtml(l.contact_name)}</td>
+            <td>${escapeHtml(l.role)}</td>
+            <td><a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a></td>
+            <td><a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a></td>
+            <td><span style="font-size: 12px; color: #6b7280;">${escapeHtml(l.primary_interest || 'Geral')}</span></td>
+            <td><span class="pin-badge">${escapeHtml(l.pin)}</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadLeads(e.target.value);
+      }, 300);
+    });
+
+    btnRefresh.addEventListener('click', () => loadLeads(searchInput.value));
+
+    // Inicialização
+    loadLeads();
+  </script>
+</body>
+</html>

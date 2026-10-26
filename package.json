@@ -1,0 +1,34 @@
+{
+  "name": "formulario-feira-farmacias-silva-graca",
+  "version": "1.0.0",
+  "description": "Landing page de recolha de leads e atribuição de PIN de roleta para feiras - Farmácias F. da Silva Graça",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "landing-page",
+    "erpi",
+    "leads",
+    "farmacia",
+    "coolify",
+    "postgresql"
+  ],
+  "author": "Farmácias F. da Silva Graça",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-basic-auth": "^1.2.1",
+    "express-rate-limit": "^7.2.0",
+    "helmet": "^7.1.0",
+    "nodemailer": "^10.2.1",
+    "pg": "^8.11.5",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
