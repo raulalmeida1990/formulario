@@ -235,7 +235,7 @@
           <div class="rgpd-container">
             <input type="checkbox" id="rgpd_consent" name="rgpd_consent" class="rgpd-checkbox" required>
             <label for="rgpd_consent" class="rgpd-text">
-              Autorizo o tratamento dos dados pelas <strong>Farmácias F. da Silva Graça</strong> para contacto institucional e envio do código da roleta nos termos do RGPD. <span class="required">*</span>
+              Autorizo o tratamento dos dados pelas <strong>Farmácias F. da Silva Graça</strong> para contacto institucional e atribuição do código da roleta nos termos do Regulamento Geral de Proteção de Dados (RGPD). <a href="#" id="openRgpdModal" class="rgpd-link">Consultar Política e Direitos RGPD</a> <span class="required">*</span>
             </label>
           </div>
 
@@ -283,8 +283,40 @@
 
     <!-- Rodapé -->
     <footer class="app-footer">
-      <p>&copy; 2026 Farmácias F. da Silva Graça. Todos os direitos reservados.</p>
+      <p>&copy; 2026 Farmácias F. da Silva Graça. Todos os direitos reservados. · <a href="#" id="footerRgpdLink" class="footer-link">Política de Privacidade & RGPD</a></p>
     </footer>
+  </div>
+
+  <!-- Modal RGPD & Política de Privacidade -->
+  <div id="rgpdModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-labelledby="modalRgpdTitle" aria-modal="true">
+      <div class="modal-header">
+        <h3 id="modalRgpdTitle" class="modal-title">Política de Privacidade & RGPD</h3>
+        <button type="button" id="closeRgpdModal" class="modal-close" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>1. Responsável pelo Tratamento</strong><br>
+        O tratamento dos dados recolhidos é da responsabilidade de <strong>Farmácias F. da Silva Graça</strong> (composta pelas Farmácia Nova da Vila, Farmácia Ilha, Farmácia Colmeias e Farmácia Souto da Carpalhosa).</p>
+
+        <p><strong>2. Finalidade da Recolha</strong><br>
+        Os dados fornecidos no presente formulário (nome, instituição, concelho, função, email, telefone e áreas de interesse) destinam-se exclusivamente à gestão do código de acesso para a dinâmica da feira e ao contacto institucional para apresentação de soluções farmacêuticas e parcerias com Lares e ERPI.</p>
+
+        <p><strong>3. Fundamento de Licitude</strong><br>
+        O tratamento baseia-se no consentimento expresso e inequívoco do titular dos dados (artigo 6.º, n.º 1, alínea a) do RGPD) concedido no momento da submissão.</p>
+
+        <p><strong>4. Prazo de Conservação</strong><br>
+        Os dados serão conservados apenas durante o período necessário para as finalidades do evento presencial e o respetivo seguimento institucional, ou até que o titular solicite a sua eliminação.</p>
+
+        <p><strong>5. Não Transmissão a Terceiros</strong><br>
+        Os seus dados não serão comercializados, partilhados ou cedidos a terceiros alheios ao grupo das Farmácias F. da Silva Graça.</p>
+
+        <p><strong>6. Direitos do Titular dos Dados</strong><br>
+        Nos termos da legislação em vigor, tem o direito de aceder, retificar, solicitar a eliminação ou opor-se ao tratamento dos seus dados a qualquer momento. Para exercer estes direitos, contacte-nos através do endereço: <a href="mailto:farmaciamatamourisca@gmail.com" style="color: var(--primary-dark); font-weight: 600;">farmaciamatamourisca@gmail.com</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnAcceptRgpd" class="btn btn-primary">Entendido e Fechar</button>
+      </div>
+    </div>
   </div>
 
   <!-- Script da Lógica da Landing Page -->
@@ -486,6 +518,39 @@
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = '🎉 Obter PIN da Roleta';
         setStep(1);
+      });
+
+      // Modal RGPD
+      const rgpdModal = document.getElementById('rgpdModal');
+      const openRgpdModal = document.getElementById('openRgpdModal');
+      const footerRgpdLink = document.getElementById('footerRgpdLink');
+      const closeRgpdModal = document.getElementById('closeRgpdModal');
+      const btnAcceptRgpd = document.getElementById('btnAcceptRgpd');
+
+      function showModal(e) {
+        if (e) e.preventDefault();
+        rgpdModal.classList.add('is-open');
+        rgpdModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function hideModal() {
+        rgpdModal.classList.remove('is-open');
+        rgpdModal.setAttribute('aria-hidden', 'true');
+      }
+
+      if (openRgpdModal) openRgpdModal.addEventListener('click', showModal);
+      if (footerRgpdLink) footerRgpdLink.addEventListener('click', showModal);
+      if (closeRgpdModal) closeRgpdModal.addEventListener('click', hideModal);
+      if (btnAcceptRgpd) btnAcceptRgpd.addEventListener('click', hideModal);
+
+      rgpdModal.addEventListener('click', (e) => {
+        if (e.target === rgpdModal) hideModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && rgpdModal.classList.contains('is-open')) {
+          hideModal();
+        }
       });
 
       // Efeito de Confetes
