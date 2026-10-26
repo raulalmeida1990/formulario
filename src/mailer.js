@@ -33,6 +33,17 @@ async function sendVisitorEmail(lead) {
   const from = process.env.SMTP_FROM || '"Farmácias F. da Silva Graça" <noreply@fdasilvagraca.pt>';
   const subject = `Farmácias F. da Silva Graça — Confirmação de Visita ao Stand (Código ${lead.pin})`;
 
+  const contactEmail = 'farmaciamatamourica@gmail.com';
+  const whatsappPhone = '351966596267';
+
+  const interestsText = lead.primary_interest ? `\nÁreas de interesse: ${lead.primary_interest}.` : '';
+  const whatsappMessage = `Olá! Visitei o stand das Farmácias F. da Silva Graça na feira.\nSou ${lead.contact_name} (${lead.role}) da instituição ${lead.institution_name} (${lead.location}).${interestsText}\nGostaria de agendar uma breve apresentação para conhecer as soluções para a nossa instituição.`;
+  const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+
+  const mailtoSubject = `Reunião Institucional - ${lead.institution_name} (${lead.location})`;
+  const mailtoBody = `Olá equipa das Farmácias F. da Silva Graça,\n\nVisitei o vosso stand na feira e gostaria de agendar uma breve apresentação das vossas soluções para a nossa instituição.\n\nDados de contacto:\n- Instituição: ${lead.institution_name}\n- Localidade: ${lead.location}\n- Nome: ${lead.contact_name} (${lead.role})\n- Telefone: ${lead.phone}\n- Email: ${lead.email}${lead.primary_interest ? `\n- Áreas de interesse: ${lead.primary_interest}` : ''}\n\nMelhores cumprimentos,\n${lead.contact_name}`;
+  const mailtoUrl = `mailto:${contactEmail}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
+
   const html = `
 <!DOCTYPE html>
 <html lang="pt">
@@ -56,8 +67,9 @@ async function sendVisitorEmail(lead) {
     .benefits-box h3 { margin: 0 0 10px 0; font-size: 16px; color: #825f96; }
     .benefits-box ul { margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px; }
     .benefits-box li { margin-bottom: 6px; }
-    .cta-container { text-align: center; margin: 32px 0 20px 0; }
-    .cta-button { display: inline-block; background-color: #825f96; color: #ffffff !important; text-decoration: none; font-weight: 600; font-size: 15px; padding: 14px 32px; border-radius: 30px; box-shadow: 0 4px 12px rgba(130, 95, 150, 0.35); }
+    .cta-container { text-align: center; margin: 28px 0 20px 0; }
+    .cta-button { display: inline-block; background-color: #825f96; color: #ffffff !important; text-decoration: none; font-weight: 600; font-size: 15px; padding: 14px 28px; border-radius: 30px; box-shadow: 0 4px 12px rgba(130, 95, 150, 0.35); margin: 6px; }
+    .cta-whatsapp { display: inline-block; background-color: #25D366; color: #ffffff !important; text-decoration: none; font-weight: 600; font-size: 15px; padding: 14px 28px; border-radius: 30px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35); margin: 6px; }
     .footer { background: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
   </style>
 </head>
@@ -89,13 +101,17 @@ async function sendVisitorEmail(lead) {
       <p>Gostaria de agendar uma breve apresentação sem compromisso para conhecer as condições exclusivas para a <strong>${lead.institution_name}</strong>?</p>
 
       <div class="cta-container">
-        <a href="mailto:${process.env.NOTIFICATION_EMAIL || 'geral@farmaciasfsilvagraca.pt'}?subject=Reunião%20Institucional%20-%20${encodeURIComponent(lead.institution_name)}" class="cta-button">
-          Agendar Reunião / Falar Connosco
+        <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="cta-whatsapp">
+          💬 Conversar no WhatsApp
+        </a>
+        <a href="${mailtoUrl}" class="cta-button">
+          ✉️ Enviar Email
         </a>
       </div>
     </div>
     <div class="footer">
       <p>Farmácias F. da Silva Graça — Apoio Técnico Farmacêutico e Soluções para Estruturas Residenciais de Idosos.<br>
+      Contacto direto: <a href="mailto:${contactEmail}" style="color: #825f96;">${contactEmail}</a> | WhatsApp: +351 966 596 267<br>
       Este email foi enviado na sequência do seu registo presencial no nosso stand.</p>
     </div>
   </div>
@@ -115,7 +131,8 @@ Apresente este código à nossa equipa no stand para rodar a roleta de prémios!
 
 Estamos ao dispor para apresentar as nossas soluções dedicadas a Lares e ERPI (Preparação Individualizada da Medicação - PIM, entregas programadas e apoio técnico farmacêutico).
 
-Contacte-nos através de geral@farmaciasfsilvagraca.pt.
+Fale connosco no WhatsApp: ${whatsappUrl}
+Ou envie-nos um email para: ${contactEmail}
   `;
 
   if (!transporter) {
