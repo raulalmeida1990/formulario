@@ -29,8 +29,8 @@ const transporter = createTransporter();
  * Envia email em HTML ao visitante com o seu PIN da roleta e apresentação institucional
  */
 async function sendVisitorEmail(lead) {
-  const from = process.env.SMTP_FROM || '"Farmácias F. da Silva Graça" <geral@farmaciasfsilvagraca.pt>';
-  const subject = `O seu PIN para a Roleta de Prémios: ${lead.pin} — Farmácias F. da Silva Graça`;
+  const from = process.env.SMTP_FROM || '"Farmácias F. da Silva Graça" <noreply@fdasilvagraca.pt>';
+  const subject = `Farmácias F. da Silva Graça — Confirmação de Visita ao Stand (Código ${lead.pin})`;
 
   const html = `
 <!DOCTYPE html>
