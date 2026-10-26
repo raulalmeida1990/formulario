@@ -33,7 +33,7 @@ async function sendVisitorEmail(lead) {
   const from = process.env.SMTP_FROM || '"Farmácias F. da Silva Graça" <noreply@fdasilvagraca.pt>';
   const subject = `Farmácias F. da Silva Graça — Confirmação de Visita ao Stand (Código ${lead.pin})`;
 
-  const contactEmail = 'farmaciamatamourica@gmail.com';
+  const contactEmail = 'farmaciamatamourisca@gmail.com';
   const whatsappPhone = '351966596267';
 
   const interestsText = lead.primary_interest ? `\nÁreas de interesse: ${lead.primary_interest}.` : '';
