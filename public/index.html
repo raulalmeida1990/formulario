@@ -185,33 +185,47 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Área de Maior Interesse na Farmácia:</label>
+            <label class="form-label">
+              Áreas de Interesse na Farmácia: <span style="font-weight: 400; color: var(--text-muted); font-size: 12px;">(selecione uma ou mais)</span>
+            </label>
             <div class="chips-grid">
               <label class="chip-option">
-                <input type="radio" name="primary_interest" value="PIM - Preparação Individualizada da Medicação" checked>
+                <input type="checkbox" name="interests" value="PIM - Preparação Individualizada da Medicação" checked>
                 <span class="chip-label">
-                  <span class="chip-icon">💊</span> PIM (Unidose / Blister Selado)
+                  <span class="chip-content">
+                    <span class="chip-icon">💊</span> PIM (Unidose / Blister Selado)
+                  </span>
+                  <span class="chip-check">✓</span>
                 </span>
               </label>
 
               <label class="chip-option">
-                <input type="radio" name="primary_interest" value="Apoio Técnico Farmacêutico e Formação">
+                <input type="checkbox" name="interests" value="Apoio Técnico Farmacêutico e Formação">
                 <span class="chip-label">
-                  <span class="chip-icon">📋</span> Apoio Farmacêutico & Conformidade
+                  <span class="chip-content">
+                    <span class="chip-icon">📋</span> Apoio Farmacêutico & Conformidade
+                  </span>
+                  <span class="chip-check">✓</span>
                 </span>
               </label>
 
               <label class="chip-option">
-                <input type="radio" name="primary_interest" value="Consumíveis de Enfermagem e Penso">
+                <input type="checkbox" name="interests" value="Consumíveis de Enfermagem e Penso">
                 <span class="chip-label">
-                  <span class="chip-icon">🩹</span> Material de Penso & Incontinência
+                  <span class="chip-content">
+                    <span class="chip-icon">🩹</span> Material de Penso & Incontinência
+                  </span>
+                  <span class="chip-check">✓</span>
                 </span>
               </label>
 
               <label class="chip-option">
-                <input type="radio" name="primary_interest" value="Condições Comerciais Globais para Lares">
+                <input type="checkbox" name="interests" value="Condições Comerciais Globais para Lares">
                 <span class="chip-label">
-                  <span class="chip-icon">🤝</span> Parceria Global e Entregas Dedicadas
+                  <span class="chip-content">
+                    <span class="chip-icon">🤝</span> Parceria Global e Entregas Dedicadas
+                  </span>
+                  <span class="chip-check">✓</span>
                 </span>
               </label>
             </div>
@@ -407,7 +421,8 @@
 
         // Preparar payload
         const selectedRole = document.querySelector('input[name="role"]:checked')?.value || 'Outro';
-        const selectedInterest = document.querySelector('input[name="primary_interest"]:checked')?.value || '';
+        const checkedInterests = Array.from(document.querySelectorAll('input[name="interests"]:checked'))
+          .map(el => el.value);
 
         const payload = {
           institution_name: document.getElementById('institution_name').value.trim(),
@@ -416,7 +431,7 @@
           role: selectedRole,
           email: email,
           phone: phone,
-          primary_interest: selectedInterest,
+          primary_interest: checkedInterests.join(', '),
           rgpd_consent: true,
         };
 

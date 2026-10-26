@@ -59,14 +59,24 @@ router.post('/submit', async (req, res) => {
       return res.status(400).json({ success: false, errors });
     }
 
-    // 2. Sanitização
-    const sanitizedInstitution = validator.escape(institution_name.trim());
-    const sanitizedLocation = validator.escape(location.trim());
-    const sanitizedContact = validator.escape(contact_name.trim());
-    const sanitizedRole = validator.escape(role.trim());
+    // 2. Limpeza e normalização (sem entidades HTML na BD, proteção SQL já garantida por queries parametrizadas)
+    const cleanString = (str) => (str ? String(str).trim().replace(/[\u0000-\u001F\u007F-\u009F]/g, '') : '');
+    const sanitizedInstitution = cleanString(institution_name);
+    const sanitizedLocation = cleanString(location);
+    const sanitizedContact = cleanString(contact_name);
+    const sanitizedRole = cleanString(role);
     const cleanEmail = validator.normalizeEmail(email.trim().toLowerCase());
-    const sanitizedPhone = phone.trim();
-    const sanitizedInterest = primary_interest ? validator.escape(primary_interest.trim()) : '';
+    const sanitizedPhone = cleanString(phone);
+
+    // Tratamento de interesses (suporte a multiselect)
+    let processedInterest = '';
+    const rawInterest = primary_interest || req.body.interests;
+    if (Array.isArray(rawInterest)) {
+      processedInterest = rawInterest.map(cleanString).filter(Boolean).join(', ');
+    } else if (typeof rawInterest === 'string' && rawInterest.trim()) {
+      processedInterest = cleanString(rawInterest);
+    }
+    const sanitizedInterest = processedInterest;
 
     // 3. Geração do PIN
     const pin = generatePin();

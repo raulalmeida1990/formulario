@@ -22,13 +22,15 @@ async function initDb() {
       role VARCHAR(100) NOT NULL,
       email VARCHAR(255) NOT NULL,
       phone VARCHAR(50) NOT NULL,
-      primary_interest VARCHAR(100),
+      primary_interest TEXT,
       pin VARCHAR(10) NOT NULL,
       rgpd_consent BOOLEAN NOT NULL DEFAULT TRUE,
       user_agent TEXT,
       ip_address VARCHAR(100),
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
+
+    ALTER TABLE leads ALTER COLUMN primary_interest TYPE TEXT;
 
     CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_leads_pin ON leads(pin);
