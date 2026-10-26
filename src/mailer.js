@@ -13,6 +13,7 @@ function createTransporter() {
   }
 
   return nodemailer.createTransport({
+    name: 'dt.fdasilvagraca.pt',
     host,
     port,
     secure,
