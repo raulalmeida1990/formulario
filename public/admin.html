@@ -91,16 +91,19 @@
       background: #f3f4f6;
     }
     .btn-sm {
-      padding: 5px 10px;
+      padding: 6px 12px;
       font-size: 12px;
       border-radius: 6px;
     }
-    .btn-success {
-      background: var(--success);
-      color: #fff;
+    .btn-email-cta {
+      background: #f3e8ff;
+      color: var(--primary-dark);
+      border: 1px solid #d8b4fe;
+      font-weight: 700;
     }
-    .btn-success:hover {
-      background: #059669;
+    .btn-email-cta:hover {
+      background: var(--primary-dark);
+      color: #ffffff;
     }
 
     /* KPI Cards */
@@ -219,7 +222,7 @@
 
     /* Status Badges & Select */
     .status-select {
-      padding: 5px 8px;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 12px;
       font-weight: 600;
@@ -306,7 +309,7 @@
     .modal-card {
       background: #ffffff;
       border-radius: 12px;
-      max-width: 680px;
+      max-width: 720px;
       width: 100%;
       max-height: 90vh;
       display: flex;
@@ -333,7 +336,12 @@
       font-size: 20px;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .modal-close:hover {
+      background: #e2e8f0;
+      color: #111827;
     }
     .modal-body {
       padding: 20px;
@@ -353,7 +361,7 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       font-size: 13px;
     }
     .email-meta-row {
@@ -370,16 +378,6 @@
       flex: 1;
       color: #111827;
       word-break: break-all;
-    }
-    .email-preview-frame {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 18px;
-      background: #ffffff;
-      max-height: 380px;
-      overflow-y: auto;
-      font-size: 14px;
-      line-height: 1.6;
     }
     .alert-banner {
       background: #fef3c7;
@@ -486,7 +484,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <h3 class="modal-title">✉️ Proposta de Reunião Presencial (Email Formal)</h3>
-        <button type="button" class="modal-close" onclick="closeModal('emailModal')">✕</button>
+        <button type="button" class="modal-close" data-close-modal="emailModal">✕</button>
       </div>
       <div class="modal-body">
         <div class="alert-banner">
@@ -516,12 +514,10 @@
           </div>
         </div>
 
-        <div class="email-preview-frame" id="modalEmailBody">
-          A carregar conteúdo...
-        </div>
+        <iframe id="modalEmailIframe" style="width: 100%; height: 380px; border: 1px solid var(--border); border-radius: 8px; background: #ffffff;"></iframe>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('emailModal')">Fechar</button>
+        <button type="button" class="btn btn-secondary" data-close-modal="emailModal">Fechar</button>
         <button type="button" id="btnConfirmSend" class="btn btn-primary">🚀 Confirmar e Enviar Email</button>
       </div>
     </div>
@@ -532,7 +528,7 @@
     <div class="modal-card" style="max-width: 520px;">
       <div class="modal-header">
         <h3 class="modal-title" id="notesModalTitle">📝 Notas & Acompanhamento</h3>
-        <button type="button" class="modal-close" onclick="closeModal('notesModal')">✕</button>
+        <button type="button" class="modal-close" data-close-modal="notesModal">✕</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="editLeadId">
@@ -548,7 +544,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeModal('notesModal')">Cancelar</button>
+        <button type="button" class="btn btn-secondary" data-close-modal="notesModal">Cancelar</button>
         <button type="button" id="btnSaveNotes" class="btn btn-primary">💾 Guardar Notas</button>
       </div>
     </div>
@@ -624,19 +620,18 @@
         const whatsappMsg = encodeURIComponent(`Olá ${l.contact_name}! Fala Gilda Seomara Graça, das Farmácias F. da Silva Graça. Entro em contacto na sequência da visita de ${l.institution_name} ao nosso stand na feira.`);
         const whatsappUrl = `https://wa.me/351${phoneClean}?text=${whatsappMsg}`;
 
-        const notesText = l.notes && l.notes.trim() ? escapeHtml(l.notes) : 'Sem notas (clique para adicionar)';
-        const notesPreview = l.notes && l.notes.trim() ? `📝 ${escapeHtml(l.notes.slice(0, 40))}${l.notes.length > 40 ? '...' : ''}` : '+ Adicionar nota';
+        const notesPreview = l.notes && l.notes.trim() ? `📝 ${escapeHtml(l.notes.slice(0, 36))}${l.notes.length > 36 ? '...' : ''}` : '+ Adicionar nota';
 
         const meetingDisplay = l.meeting_date 
           ? `<strong style="color: #5b21b6;">📅 ${new Date(l.meeting_date).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</strong>`
           : '<span style="color: #9ca3af; font-size: 11px;">Não agendada</span>';
 
         const emailSentLabel = l.email_sent_at 
-          ? `<div style="font-size: 10px; color: #1e40af; margin-top: 3px;">Enviado: ${new Date(l.email_sent_at).toLocaleDateString('pt-PT')}</div>`
+          ? `<div style="font-size: 10px; color: #1e40af; margin-top: 3px;">✓ Enviado: ${new Date(l.email_sent_at).toLocaleDateString('pt-PT')}</div>`
           : '';
 
         return `
-          <tr>
+          <tr data-lead-id="${l.id}">
             <td>
               <strong>${escapeHtml(l.institution_name)}</strong>
               <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(l.location)}</div>
@@ -646,14 +641,20 @@
               <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(l.role)}</div>
             </td>
             <td>
-              <div><a href="mailto:${escapeHtml(l.email)}" style="color: #1f2937; text-decoration: none;">${escapeHtml(l.email)}</a></div>
-              <div><a href="tel:${escapeHtml(l.phone)}" style="color: var(--primary-dark); font-weight: 600; text-decoration: none;">📞 ${escapeHtml(l.phone)}</a></div>
+              <div>
+                <a href="#" class="btn-preview-email" data-id="${l.id}" style="color: var(--primary-dark); font-weight: 600; text-decoration: underline;" title="Clique para pré-visualizar ou enviar email">
+                  ✉️ ${escapeHtml(l.email)}
+                </a>
+              </div>
+              <div style="margin-top: 4px;">
+                <a href="tel:${escapeHtml(l.phone)}" style="color: #374151; font-weight: 600; text-decoration: none;">📞 ${escapeHtml(l.phone)}</a>
+              </div>
             </td>
             <td>
               <span style="font-size: 12px; color: #4b5563;">${escapeHtml(l.primary_interest || 'PIM')}</span>
             </td>
             <td>
-              <select class="status-select ${statusClass}" onchange="updateLeadStatus('${l.id}', this.value)">
+              <select class="status-select ${statusClass}" data-id="${l.id}">
                 <option value="Pendente" ${l.status === 'Pendente' ? 'selected' : ''}>⚪ Pendente</option>
                 <option value="Email Enviado" ${l.status === 'Email Enviado' ? 'selected' : ''}>🔵 Email Enviado</option>
                 <option value="Chamada Efetuada" ${l.status === 'Chamada Efetuada' ? 'selected' : ''}>🟡 Chamada Feita</option>
@@ -665,13 +666,13 @@
             </td>
             <td>${meetingDisplay}</td>
             <td>
-              <button type="button" class="notes-btn" onclick="openNotesModal('${l.id}', '${escapeAttr(l.institution_name)}', '${escapeAttr(l.notes || '')}', '${l.meeting_date || ''}')">
+              <button type="button" class="notes-btn btn-open-notes" data-id="${l.id}">
                 ${notesPreview}
               </button>
             </td>
             <td>
               <div class="quick-actions">
-                <button type="button" class="btn btn-sm btn-secondary" onclick="openEmailPreview('${l.id}')" title="Pré-visualizar ou Enviar Email Formal">
+                <button type="button" class="btn btn-sm btn-email-cta btn-preview-email" data-id="${l.id}" title="Pré-visualizar ou Enviar Email Formal">
                   ✉️ Email
                 </button>
                 <a href="${whatsappUrl}" target="_blank" class="action-icon whatsapp" title="Conversar no WhatsApp">
@@ -686,6 +687,45 @@
         `;
       }).join('');
     }
+
+    // Event Delegation para a Tabela (garante funcionamento mesmo com qualquer restrição CSP)
+    leadsTableBody.addEventListener('click', (e) => {
+      const emailTrigger = e.target.closest('.btn-preview-email');
+      if (emailTrigger) {
+        e.preventDefault();
+        const id = emailTrigger.getAttribute('data-id');
+        openEmailPreview(id);
+        return;
+      }
+
+      const notesTrigger = e.target.closest('.btn-open-notes');
+      if (notesTrigger) {
+        e.preventDefault();
+        const id = notesTrigger.getAttribute('data-id');
+        const lead = allLeads.find(l => l.id === id);
+        if (lead) {
+          openNotesModal(lead.id, lead.institution_name, lead.notes, lead.meeting_date);
+        }
+        return;
+      }
+    });
+
+    leadsTableBody.addEventListener('change', (e) => {
+      const statusSelect = e.target.closest('.status-select');
+      if (statusSelect) {
+        const id = statusSelect.getAttribute('data-id');
+        updateLeadStatus(id, statusSelect.value);
+      }
+    });
+
+    // Fechar modais via data attribute
+    document.addEventListener('click', (e) => {
+      const closeBtn = e.target.closest('[data-close-modal]');
+      if (closeBtn) {
+        const modalId = closeBtn.getAttribute('data-close-modal');
+        closeModal(modalId);
+      }
+    });
 
     // Atualizar Estado da Lead
     async function updateLeadStatus(id, newStatus) {
@@ -744,7 +784,8 @@
       currentPreviewLeadId = id;
       document.getElementById('modalEmailTo').textContent = 'A carregar...';
       document.getElementById('modalEmailSubject').textContent = 'A carregar...';
-      document.getElementById('modalEmailBody').innerHTML = '<p>A preparar modelo de email...</p>';
+      const iframe = document.getElementById('modalEmailIframe');
+      iframe.srcdoc = '<p style="font-family: sans-serif; padding: 20px;">A preparar modelo de email...</p>';
       openModal('emailModal');
 
       try {
@@ -753,12 +794,12 @@
         if (data.success) {
           document.getElementById('modalEmailTo').textContent = `${data.lead.contact_name} <${data.lead.email}>`;
           document.getElementById('modalEmailSubject').textContent = data.email.subject;
-          document.getElementById('modalEmailBody').innerHTML = data.email.html;
+          iframe.srcdoc = data.email.html;
         } else {
-          document.getElementById('modalEmailBody').innerHTML = `<p style="color: red;">Erro: ${data.message}</p>`;
+          iframe.srcdoc = `<p style="color: red; padding: 20px;">Erro: ${data.message}</p>`;
         }
       } catch (err) {
-        document.getElementById('modalEmailBody').innerHTML = '<p style="color: red;">Erro ao contactar servidor.</p>';
+        iframe.srcdoc = '<p style="color: red; padding: 20px;">Erro ao contactar servidor.</p>';
       }
     }
 
@@ -800,6 +841,15 @@
       document.getElementById(id).classList.remove('is-open');
     }
 
+    // Fechar ao clicar no backdrop escuro
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal(modal.id);
+        }
+      });
+    });
+
     // Filtros de Cartões KPI
     document.querySelectorAll('.kpi-card').forEach(card => {
       card.addEventListener('click', () => {
@@ -832,13 +882,6 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-    }
-    function escapeAttr(text) {
-      if (!text) return '';
-      return String(text)
-        .replace(/'/g, "\\'")
-        .replace(/"/g, '&quot;')
-        .replace(/\n/g, ' ');
     }
 
     // Carregamento inicial
