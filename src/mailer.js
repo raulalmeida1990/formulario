@@ -187,6 +187,67 @@ async function sendInternalNotification(lead) {
 }
 
 /**
+ * Formata o vocativo formal com deteção de género e cargo (Exmo. Sr. Dr. / Exma. Sr.ª Dr.ª / Exmo. Sr. / Exma. Sr.ª)
+ */
+function formatFormalSalutation(contactName, role) {
+  let raw = (contactName || '').trim();
+  // Capitalizar palavras se estiverem em minúsculas (ex: "ana catarina Botas", "alexandrina Esgaio")
+  raw = raw.split(' ').map(w => w.length > 2 ? w.charAt(0).toUpperCase() + w.slice(1) : w).join(' ');
+
+  let cleanForDetect = raw.replace(/^teste\s+/i, '').trim();
+  const hasExistingDr = /^(dr|dra|doutor|doutora)\.?\s+/i.test(cleanForDetect);
+  cleanForDetect = cleanForDetect.replace(/^(dr|dra|doutor|doutora|sr|sra|prof|eng)\.?\s+/i, '').trim();
+
+  const firstName = cleanForDetect.split(/\s+/)[0].toLowerCase();
+  const norm = firstName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  const knownFemale = new Set([
+    'ana', 'andreia', 'antonia', 'beatriz', 'brigite', 'carla', 'catarina', 'claudia', 
+    'cristiana', 'catia', 'celia', 'dora', 'elisabete', 'enia', 'filipa', 'helen', 'helena', 
+    'ines', 'isabel', 'joana', 'jessica', 'margarida', 'maria', 'marisa', 'micaela', 
+    'monica', 'patricia', 'rita', 'sofia', 'vania', 'alexandrina', 'angela', 'raquel',
+    'lurdes', 'alice', 'teresa', 'sara', 'paula', 'marta', 'clara', 'leonor', 'matilde',
+    'fatima', 'isilda', 'lucia', 'mariana', 'luisa', 'susana'
+  ]);
+
+  const knownMale = new Set([
+    'andre', 'antonio', 'carlos', 'daniel', 'david', 'diogo', 'duarte', 'filipe', 
+    'francisco', 'gabriel', 'goncalo', 'guilherme', 'gustavo', 'henrique', 'hugo', 
+    'ivo', 'jaime', 'joao', 'jorge', 'jose', 'luis', 'manuel', 'marcio', 'marco', 
+    'mario', 'miguel', 'nuno', 'paulo', 'pedro', 'rafael', 'raul', 'ricardo', 'rodrigo', 
+    'rui', 'sergio', 'tiago', 'tomas', 'vasco', 'vicente', 'vitor'
+  ]);
+
+  let isFemale = false;
+  if (knownFemale.has(norm) || knownFemale.has(firstName)) {
+    isFemale = true;
+  } else if (knownMale.has(norm) || knownMale.has(firstName)) {
+    isFemale = false;
+  } else if (norm.endsWith('a')) {
+    isFemale = true;
+  } else {
+    isFemale = false;
+  }
+
+  const isDT = role && role.toLowerCase().includes('técnico');
+  const useDr = isDT || hasExistingDr;
+
+  let prefix = '';
+  if (isFemale) {
+    prefix = useDr ? 'Exma. Sr.ª Dr.ª' : 'Exma. Sr.ª';
+  } else {
+    prefix = useDr ? 'Exmo. Sr. Dr.' : 'Exmo. Sr.';
+  }
+
+  let displayName = raw;
+  if (useDr) {
+    displayName = displayName.replace(/^(dr|dra|doutor|doutora)\.?\s+/i, '');
+  }
+
+  return `${prefix} ${displayName}`;
+}
+
+/**
  * Gera o conteúdo (HTML, Texto, Assunto e Destinatários) do email de proposta de reunião formal
  */
 function generateMeetingProposalContent(lead) {
@@ -194,6 +255,7 @@ function generateMeetingProposalContent(lead) {
   const replyTo = 'farmaciamatamourisca@gmail.com';
   const cc = 'farmaciamatamourisca@gmail.com';
   const subject = `Reunião Institucional Farmácias F. da Silva Graça — ${lead.institution_name}`;
+  const salutation = formatFormalSalutation(lead.contact_name, lead.role);
 
   const interestsList = lead.primary_interest 
     ? lead.primary_interest.split(',').map(s => s.trim()).filter(Boolean)
@@ -235,7 +297,7 @@ function generateMeetingProposalContent(lead) {
       <p>Apoio Dedicado e Parcerias para Lares e ERPI</p>
     </div>
     <div class="content">
-      <div class="greeting">Exmo.(a) Sr.(a) ${lead.contact_name},<br><span style="font-size: 14px; font-weight: 400; color: #6b7280;">${lead.role} — ${lead.institution_name}</span></div>
+      <div class="greeting">${salutation},<br><span style="font-size: 14px; font-weight: 400; color: #6b7280;">${lead.role} — ${lead.institution_name}</span></div>
       
       <p>Escrevo-lhe na sequência do nosso contacto e visita ao stand das <strong>Farmácias F. da Silva Graça</strong> na feira, onde registámos com muito gosto a participação de <strong>${lead.institution_name}</strong> (${lead.location}).</p>
 
@@ -277,7 +339,7 @@ function generateMeetingProposalContent(lead) {
   `;
 
   const text = `
-Exmo.(a) Sr.(a) ${lead.contact_name},
+${salutation},
 ${lead.role} — ${lead.institution_name}
 
 Escrevo-lhe na sequência do nosso encontro e visita ao stand das Farmácias F. da Silva Graça na feira, onde registámos a participação de ${lead.institution_name} (${lead.location}).
