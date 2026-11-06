@@ -294,14 +294,15 @@ function generateMeetingProposalContent(lead) {
   <div class="container">
     <div class="header">
       <h1>Farmácias F. da Silva Graça</h1>
-      <p>Apoio Dedicado e Parcerias para Lares e ERPI</p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92; font-weight: 500;">Farmácia Nova da Vila &bull; Farmácia Ilha &bull; Farmácia Colmeias &bull; Farmácia Souto da Carpalhosa</p>
+      <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.95;">Apoio Dedicado e Parcerias para Lares e ERPI</p>
     </div>
     <div class="content">
       <div class="greeting">${salutation},<br><span style="font-size: 14px; font-weight: 400; color: #6b7280;">${lead.role} — ${lead.institution_name}</span></div>
       
-      <p>Escrevo-lhe na sequência do nosso contacto e visita ao stand das <strong>Farmácias F. da Silva Graça</strong> na feira, onde registámos com muito gosto a participação de <strong>${lead.institution_name}</strong> (${lead.location}).</p>
+      <p>Em primeiro lugar, gostaríamos de agradecer calorosamente a sua visita e participação no stand das <strong>Farmácias F. da Silva Graça</strong> (grupo constituído pela Farmácia Nova da Vila, Farmácia Ilha, Farmácia Colmeias e Farmácia Souto da Carpalhosa) durante a feira, onde registámos com muito agrado a presença da vossa instituição, <strong>${lead.institution_name}</strong> (${lead.location}).</p>
 
-      <p>Tendo em conta as necessidades abordadas e o interesse manifestado nas nossas soluções institucionais, venho por este meio solicitar a disponibilidade de V. Exa. para uma breve reunião presencial nas vossas instalações em ${lead.location}.</p>
+      <p>Na sequência desse nosso contacto e do interesse manifestado nas nossas soluções de apoio institucional e continuado a estruturas residenciais seniores, venho por este meio solicitar a disponibilidade de V. Exa. para uma breve reunião presencial nas vossas instalações em ${lead.location}.</p>
 
       <div class="highlight-box">
         <h3>Objetivos desta Reunião Técnica (duração prevista: 25 a 30 min):</h3>
@@ -330,8 +331,9 @@ function generateMeetingProposalContent(lead) {
       </div>
     </div>
     <div class="footer">
-      <p>Farmácias F. da Silva Graça — Soluções Farmacêuticas e Apoio Técnico para Estruturas Residenciais de Idosos.<br>
-      Contacto enviado na sequência da visita ao stand da feira.</p>
+      <p><strong>Farmácias F. da Silva Graça</strong> (Farmácia Nova da Vila &bull; Farmácia Ilha &bull; Farmácia Colmeias &bull; Farmácia Souto da Carpalhosa)<br>
+      Soluções Farmacêuticas e Apoio Técnico Especializado para Lares e ERPI.<br>
+      Contacto enviado no seguimento da visita e participação no nosso stand da feira.</p>
     </div>
   </div>
 </body>
@@ -342,16 +344,16 @@ function generateMeetingProposalContent(lead) {
 ${salutation},
 ${lead.role} — ${lead.institution_name}
 
-Escrevo-lhe na sequência do nosso encontro e visita ao stand das Farmácias F. da Silva Graça na feira, onde registámos a participação de ${lead.institution_name} (${lead.location}).
+Em primeiro lugar, gostaríamos de agradecer calorosamente a sua visita e participação no stand das Farmácias F. da Silva Graça (grupo constituído pela Farmácia Nova da Vila, Farmácia Ilha, Farmácia Colmeias e Farmácia Souto da Carpalhosa) durante a feira, onde registámos com muito agrado a presença da vossa instituição, ${lead.institution_name} (${lead.location}).
 
-Tendo em conta o interesse manifestado nas nossas soluções (em particular PIM - Preparação Individualizada da Medicação), venho por este meio solicitar a disponibilidade de V. Exa. para uma breve reunião presencial nas vossas instalações em ${lead.location} (cerca de 25-30 minutos).
+Na sequência desse nosso contacto e do interesse manifestado nas nossas soluções de apoio institucional (com destaque para o circuito de PIM - Preparação Individualizada da Medicação), venho por este meio solicitar a disponibilidade de V. Exa. para uma breve reunião presencial nas vossas instalações em ${lead.location} (cerca de 25-30 minutos).
 
-Objetivo:
+Objetivo da Reunião Técnica:
 1. Apresentar o nosso circuito certificado de PIM (unidose/blister selado) e a redução drástica de tempo de enfermagem;
 2. Conhecer as necessidades específicas dos utentes da ${lead.institution_name};
-3. Avaliar, sem compromisso, uma proposta de condições de fornecimento e apoio farmacêutico dedicado.
+3. Avaliar, sem compromisso, uma proposta de condições de fornecimento e apoio farmacêutico dedicado através da farmácia do nosso grupo mais próxima da vossa instituição.
 
-Poderá responder a este email indicando a vossa melhor disponibilidade ou contactar-me diretamente pelo telefone +351 966 596 267.
+Poderá responder diretamente a este email indicando a vossa melhor disponibilidade ou contactar-me pelo telefone +351 966 596 267.
 
 Com os melhores cumprimentos,
 
