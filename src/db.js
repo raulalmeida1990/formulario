@@ -31,8 +31,13 @@ async function initDb() {
     );
 
     ALTER TABLE leads ALTER COLUMN primary_interest TYPE TEXT;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Pendente';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS notes TEXT DEFAULT '';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS email_sent_at TIMESTAMP WITH TIME ZONE;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS meeting_date TIMESTAMP WITH TIME ZONE;
 
     CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
     CREATE INDEX IF NOT EXISTS idx_leads_pin ON leads(pin);
     CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
   `;

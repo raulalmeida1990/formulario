@@ -186,7 +186,149 @@ async function sendInternalNotification(lead) {
   });
 }
 
+/**
+ * Gera o conteúdo (HTML, Texto, Assunto e Destinatários) do email de proposta de reunião formal
+ */
+function generateMeetingProposalContent(lead) {
+  const from = '"Gilda Seomara Graça — Farmácias F. da Silva Graça" <noreply@fdasilvagraca.pt>';
+  const replyTo = 'farmaciamatamourisca@gmail.com';
+  const cc = 'farmaciamatamourisca@gmail.com';
+  const subject = `Reunião Institucional Farmácias F. da Silva Graça — ${lead.institution_name}`;
+
+  const interestsList = lead.primary_interest 
+    ? lead.primary_interest.split(',').map(s => s.trim()).filter(Boolean)
+    : ['PIM - Preparação Individualizada da Medicação'];
+
+  const interestsHtml = interestsList.map(item => `<li><strong>${item}</strong></li>`).join('');
+
+  const html = `
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${subject}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f7f5f9; margin: 0; padding: 20px; color: #2d3142; }
+    .container { max-width: 620px; margin: 0 auto; background: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .header { background: linear-gradient(135deg, #a581b9 0%, #825f96 100%); padding: 32px 26px; text-align: center; color: #ffffff; }
+    .header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .header p { margin: 6px 0 0 0; font-size: 14px; opacity: 0.94; }
+    .content { padding: 32px 28px; line-height: 1.65; font-size: 15px; color: #374151; }
+    .greeting { font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 14px; }
+    .highlight-box { background: #faf8fc; border-left: 4px solid #825f96; padding: 18px 20px; border-radius: 0 10px 10px 0; margin: 24px 0; }
+    .highlight-box h3 { margin: 0 0 10px 0; font-size: 15px; color: #825f96; }
+    .highlight-box ul { margin: 0; padding-left: 20px; font-size: 14px; }
+    .highlight-box li { margin-bottom: 6px; }
+    .cta-box { text-align: center; margin: 32px 0 20px 0; padding: 20px; background: #fdfcff; border: 1px dashed #a581b9; border-radius: 12px; }
+    .cta-button { display: inline-block; background-color: #825f96; color: #ffffff !important; text-decoration: none; font-weight: 600; font-size: 15px; padding: 14px 30px; border-radius: 30px; box-shadow: 0 4px 12px rgba(130, 95, 150, 0.35); }
+    .signature { margin-top: 32px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #4b5563; }
+    .signature-name { font-size: 16px; font-weight: 700; color: #825f96; }
+    .signature-title { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+    .footer { background: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Farmácias F. da Silva Graça</h1>
+      <p>Apoio Dedicado e Parcerias para Lares e ERPI</p>
+    </div>
+    <div class="content">
+      <div class="greeting">Exmo.(a) Sr.(a) ${lead.contact_name},<br><span style="font-size: 14px; font-weight: 400; color: #6b7280;">${lead.role} — ${lead.institution_name}</span></div>
+      
+      <p>Escrevo-lhe na sequência do nosso contacto e visita ao stand das <strong>Farmácias F. da Silva Graça</strong> na feira, onde registámos com muito gosto a participação de <strong>${lead.institution_name}</strong> (${lead.location}).</p>
+
+      <p>Tendo em conta as necessidades abordadas e o interesse manifestado nas nossas soluções institucionais, venho por este meio solicitar a disponibilidade de V. Exa. para uma breve reunião presencial nas vossas instalações em ${lead.location}.</p>
+
+      <div class="highlight-box">
+        <h3>Objetivos desta Reunião Técnica (duração prevista: 25 a 30 min):</h3>
+        <ul>
+          <li><strong>Apresentação do Circuito PIM (Preparação Individualizada da Medicação):</strong> Demonstração do sistema de embalagem selada/unidose e do seu impacto direto no aumento da segurança clínica e na poupança drástica de horas de enfermagem.</li>
+          <li><strong>Levantamento Prático de Necessidades:</strong> Avaliação sem qualquer compromisso da realidade e volume de utentes da ${lead.institution_name}.</li>
+          <li><strong>Proposta de Condições Especiais:</strong> Apresentação das condições de parceria, logística e apoio técnico farmacêutico continuado através da farmácia do nosso grupo mais conveniente para a vossa instituição.</li>
+        </ul>
+      </div>
+
+      <p>Gostaria de agendar este encontro presencial nos próximos dias. Terá disponibilidade para nos receber numa das seguintes opções, ou num horário que considere mais conveniente?</p>
+
+      <div class="cta-box">
+        <p style="margin: 0 0 14px 0; font-weight: 600; color: #1f2937;">Pode responder diretamente a este email ou agendar por contacto direto:</p>
+        <a href="mailto:${replyTo}?subject=${encodeURIComponent(`Reunião Presencial - ${lead.institution_name}`)}&body=${encodeURIComponent(`Olá Dr.ª Gilda Seomara Graça,\n\nConfirmamos a disponibilidade da ${lead.institution_name} para a reunião presencial sobre o serviço de PIM.\n\nSugestão de dia e hora: \nContacto: ${lead.contact_name} (${lead.phone})\n\nCom os melhores cumprimentos,\n${lead.contact_name}`)}" class="cta-button">
+          ✉️ Responder e Indicar Disponibilidade
+        </a>
+      </div>
+
+      <div class="signature">
+        <div class="signature-name">Gilda Seomara Graça</div>
+        <div class="signature-title">Direção de Parcerias e Relações Institucionais<br>Farmácias F. da Silva Graça</div>
+        <p style="margin: 4px 0;">📞 <strong>Contacto direto:</strong> <a href="tel:+351966596267" style="color: #825f96; text-decoration: none;">+351 966 596 267</a></p>
+        <p style="margin: 4px 0;">✉️ <strong>Email:</strong> <a href="mailto:${replyTo}" style="color: #825f96; text-decoration: none;">${replyTo}</a></p>
+        <p style="margin: 8px 0 0 0; font-size: 12px; color: #6b7280;">Farmácia Nova da Vila &bull; Farmácia Ilha &bull; Farmácia Colmeias &bull; Farmácia Souto da Carpalhosa</p>
+      </div>
+    </div>
+    <div class="footer">
+      <p>Farmácias F. da Silva Graça — Soluções Farmacêuticas e Apoio Técnico para Estruturas Residenciais de Idosos.<br>
+      Contacto enviado na sequência da visita ao stand da feira.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  const text = `
+Exmo.(a) Sr.(a) ${lead.contact_name},
+${lead.role} — ${lead.institution_name}
+
+Escrevo-lhe na sequência do nosso encontro e visita ao stand das Farmácias F. da Silva Graça na feira, onde registámos a participação de ${lead.institution_name} (${lead.location}).
+
+Tendo em conta o interesse manifestado nas nossas soluções (em particular PIM - Preparação Individualizada da Medicação), venho por este meio solicitar a disponibilidade de V. Exa. para uma breve reunião presencial nas vossas instalações em ${lead.location} (cerca de 25-30 minutos).
+
+Objetivo:
+1. Apresentar o nosso circuito certificado de PIM (unidose/blister selado) e a redução drástica de tempo de enfermagem;
+2. Conhecer as necessidades específicas dos utentes da ${lead.institution_name};
+3. Avaliar, sem compromisso, uma proposta de condições de fornecimento e apoio farmacêutico dedicado.
+
+Poderá responder a este email indicando a vossa melhor disponibilidade ou contactar-me diretamente pelo telefone +351 966 596 267.
+
+Com os melhores cumprimentos,
+
+Gilda Seomara Graça
+Direção de Parcerias e Relações Institucionais
+Farmácias F. da Silva Graça
+(Farmácia Nova da Vila • Farmácia Ilha • Farmácia Colmeias • Farmácia Souto da Carpalhosa)
+Tel: +351 966 596 267
+Email: ${replyTo}
+  `;
+
+  return {
+    from,
+    to: lead.email,
+    cc,
+    replyTo,
+    subject,
+    html,
+    text,
+  };
+}
+
+/**
+ * Envia o email de proposta de reunião formal para a lead
+ */
+async function sendMeetingProposalEmail(lead) {
+  const content = generateMeetingProposalContent(lead);
+
+  if (!transporter) {
+    console.log(`[SIMULAÇÃO SMTP] Email de reunião para ${lead.email}: ${content.subject}`);
+    return { messageId: 'simulated-' + Date.now(), ...content };
+  }
+
+  return transporter.sendMail(content);
+}
+
 module.exports = {
   sendVisitorEmail,
   sendInternalNotification,
+  generateMeetingProposalContent,
+  sendMeetingProposalEmail,
 };

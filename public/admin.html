@@ -3,25 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Gestão de Leads — Farmácias F. da Silva Graça</title>
+  <title>CRM e Gestão de Leads — Farmácias F. da Silva Graça</title>
   <style>
     :root {
       --primary: #a581b9;
       --primary-dark: #825f96;
       --primary-light: #f4eff7;
       --text-main: #1f2937;
+      --text-muted: #6b7280;
       --border: #e5e7eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f9fafb;
+      background: var(--bg);
       color: var(--text-main);
-      padding: 24px 20px;
+      padding: 20px 24px;
+      line-height: 1.5;
     }
     .header {
-      max-width: 1200px;
-      margin: 0 auto 24px;
+      max-width: 1440px;
+      margin: 0 auto 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -34,27 +43,31 @@
       gap: 16px;
     }
     .header-left img {
-      max-height: 50px;
+      max-height: 48px;
     }
     .header-title h1 {
       font-size: 20px;
       font-weight: 700;
       color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .header-title p {
       font-size: 13px;
-      color: #6b7280;
+      color: var(--text-muted);
     }
     .header-actions {
       display: flex;
       gap: 10px;
+      align-items: center;
     }
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 10px 18px;
-      font-size: 14px;
+      padding: 9px 16px;
+      font-size: 13px;
       font-weight: 600;
       border-radius: 8px;
       cursor: pointer;
@@ -77,10 +90,60 @@
     .btn-secondary:hover {
       background: #f3f4f6;
     }
-    .card {
-      max-width: 1200px;
-      margin: 0 auto;
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      max-width: 1440px;
+      margin: 0 auto 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .kpi-card {
       background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .kpi-card:hover, .kpi-card.active {
+      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(130, 95, 150, 0.12);
+    }
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111827;
+      margin-top: 4px;
+    }
+
+    /* Main Card */
+    .card {
+      max-width: 1440px;
+      margin: 0 auto;
+      background: var(--card-bg);
       border-radius: 12px;
       border: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -93,27 +156,37 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      gap: 14px;
+      background: #ffffff;
+    }
+    .filters-left {
+      display: flex;
+      align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
     .search-input {
       padding: 8px 14px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 14px;
-      width: 280px;
+      border-radius: 8px;
+      font-size: 13px;
+      width: 290px;
       outline: none;
     }
     .search-input:focus {
       border-color: var(--primary);
     }
-    .stats-badge {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary-dark);
-      background: var(--primary-light);
-      padding: 6px 14px;
-      border-radius: 20px;
+    .status-select-filter {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      background: #ffffff;
+      outline: none;
+      cursor: pointer;
     }
+
+    /* Table */
     .table-container {
       overflow-x: auto;
     }
@@ -124,36 +197,201 @@
       font-size: 13px;
     }
     th {
-      background: #f9fafb;
-      padding: 12px 16px;
+      background: #f8fafc;
+      padding: 12px 14px;
       font-weight: 600;
       color: #4b5563;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #f3f4f6;
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
       color: #1f2937;
+      vertical-align: middle;
     }
     tr:hover td {
       background: #faf8fc;
     }
-    .pin-badge {
-      display: inline-block;
-      font-family: monospace;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--primary-dark);
-      background: var(--primary-light);
-      padding: 3px 8px;
+
+    /* Status Badges & Select */
+    .status-select {
+      padding: 5px 8px;
       border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      cursor: pointer;
+      outline: none;
     }
+    .status-select.Pendente { background: #f3f4f6; color: #4b5563; }
+    .status-select.Email-Enviado { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+    .status-select.Chamada-Efetuada { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+    .status-select.Reuniao-Agendada { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+    .status-select.Parceria-Fechada { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+    .status-select.Nao-Interessado { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+
+    .quick-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .action-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: #f3f4f6;
+      color: #4b5563;
+      text-decoration: none;
+      font-size: 14px;
+      border: 1px solid #e5e7eb;
+      transition: all 0.15s;
+    }
+    .action-icon:hover {
+      background: #e5e7eb;
+      transform: scale(1.05);
+    }
+    .action-icon.whatsapp {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .notes-btn {
+      background: none;
+      border: none;
+      color: var(--primary-dark);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: underline;
+      display: block;
+      margin-top: 4px;
+      text-align: left;
+    }
+
     .empty-state {
       padding: 48px 20px;
       text-align: center;
       color: #9ca3af;
       font-size: 14px;
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+    .modal-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: 12px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+    .modal-footer {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .email-meta-grid {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .email-meta-row {
+      display: flex;
+      margin-bottom: 6px;
+    }
+    .email-meta-row:last-child { margin-bottom: 0; }
+    .email-meta-label {
+      width: 90px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .email-meta-val {
+      flex: 1;
+      color: #111827;
+      word-break: break-all;
+    }
+    .email-preview-frame {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      background: #ffffff;
+      max-height: 380px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .alert-banner {
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
   </style>
 </head>
@@ -161,98 +399,430 @@
 
   <header class="header">
     <div class="header-left">
-      <img src="/images/logo.png" alt="Logo">
+      <img src="/images/logo.png" alt="Logo Farmácias F. da Silva Graça">
       <div class="header-title">
-        <h1>Painel de Leads — Feira de Exposições</h1>
-        <p>Farmácias F. da Silva Graça &bull; Soluções para Lares e ERPI</p>
+        <h1>Painel CRM de Leads — Feira</h1>
+        <p>Farmácias F. da Silva Graça &bull; Gestão de Contactos & Reuniões Institucionais</p>
       </div>
     </div>
     <div class="header-actions">
       <button id="btnRefresh" class="btn btn-secondary">🔄 Atualizar</button>
-      <a href="/admin/export-csv" class="btn btn-primary">📥 Descarregar Excel / CSV</a>
+      <a href="/admin/export-csv" class="btn btn-primary">📥 Exportar para Excel / CSV</a>
     </div>
   </header>
 
+  <!-- Métricas do Funil Comercial -->
+  <section class="kpi-grid">
+    <div class="kpi-card" data-status="Todos" id="kpiTotal">
+      <div class="kpi-title">Total de Leads</div>
+      <div class="kpi-value" id="valTotal">0</div>
+    </div>
+    <div class="kpi-card" data-status="Pendente" id="kpiPendente">
+      <div class="kpi-title" style="color: #6b7280;">⚪ Pendente (Novo)</div>
+      <div class="kpi-value" id="valPendente">0</div>
+    </div>
+    <div class="kpi-card" data-status="Email Enviado" id="kpiEmail">
+      <div class="kpi-title" style="color: #1e40af;">🔵 Email Enviado</div>
+      <div class="kpi-value" id="valEmail">0</div>
+    </div>
+    <div class="kpi-card" data-status="Chamada Efetuada" id="kpiChamada">
+      <div class="kpi-title" style="color: #92400e;">🟡 Chamada Feita</div>
+      <div class="kpi-value" id="valChamada">0</div>
+    </div>
+    <div class="kpi-card" data-status="Reunião Agendada" id="kpiReuniao">
+      <div class="kpi-title" style="color: #5b21b6;">🟣 Reunião Agendada</div>
+      <div class="kpi-value" id="valReuniao">0</div>
+    </div>
+    <div class="kpi-card" data-status="Parceria Fechada" id="kpiFechada">
+      <div class="kpi-title" style="color: #065f46;">🟢 Parceria Fechada</div>
+      <div class="kpi-value" id="valFechada">0</div>
+    </div>
+  </section>
+
   <main class="card">
     <div class="card-bar">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar instituição, nome ou PIN...">
-      <div id="statsBadge" class="stats-badge">Total: 0 instituições</div>
+      <div class="filters-left">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar instituição, nome, concelho, tel...">
+        <select id="statusFilter" class="status-select-filter">
+          <option value="Todos">Todos os Estados</option>
+          <option value="Pendente">⚪ Pendente</option>
+          <option value="Email Enviado">🔵 Email Enviado</option>
+          <option value="Chamada Efetuada">🟡 Chamada Efetuada</option>
+          <option value="Reunião Agendada">🟣 Reunião Agendada</option>
+          <option value="Parceria Fechada">🟢 Parceria Fechada</option>
+          <option value="Não Interessado">🔴 Não Interessado</option>
+        </select>
+      </div>
+      <div id="statsBadge" style="font-size: 13px; font-weight: 600; color: var(--primary-dark);">
+        A carregar...
+      </div>
     </div>
 
     <div class="table-container">
       <table>
         <thead>
           <tr>
-            <th>Data/Hora</th>
-            <th>Instituição / Lar</th>
-            <th>Localidade</th>
-            <th>Responsável</th>
-            <th>Cargo</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Área de Interesse</th>
-            <th>PIN Roleta</th>
+            <th>Instituição & Local</th>
+            <th>Responsável & Cargo</th>
+            <th>Contactos Diretos</th>
+            <th>Áreas de Interesse</th>
+            <th>Estado CRM</th>
+            <th>Data Reunião</th>
+            <th>Notas</th>
+            <th>Ações Comerciais</th>
           </tr>
         </thead>
         <tbody id="leadsTableBody">
           <tr>
-            <td colspan="9" class="empty-state">A carregar registos...</td>
+            <td colspan="8" class="empty-state">A carregar leads...</td>
           </tr>
         </tbody>
       </table>
     </div>
   </main>
 
+  <!-- Modal de Pré-Visualização e Envio de Email Formal -->
+  <div id="emailModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">✉️ Proposta de Reunião Presencial (Email Formal)</h3>
+        <button type="button" class="modal-close" onclick="closeModal('emailModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert-banner">
+          ⚠️ <strong>Atenção:</strong> O email só é disparado se clicares em "Confirmar e Enviar Email". Podes apenas pré-visualizar sem qualquer envio.
+        </div>
+
+        <div class="email-meta-grid">
+          <div class="email-meta-row">
+            <span class="email-meta-label">De:</span>
+            <span class="email-meta-val" id="modalEmailFrom">Gilda Seomara Graça — Farmácias F. da Silva Graça &lt;noreply@fdasilvagraca.pt&gt;</span>
+          </div>
+          <div class="email-meta-row">
+            <span class="email-meta-label">Para:</span>
+            <span class="email-meta-val" id="modalEmailTo">-</span>
+          </div>
+          <div class="email-meta-row">
+            <span class="email-meta-label">CC:</span>
+            <span class="email-meta-val">farmaciamatamourisca@gmail.com</span>
+          </div>
+          <div class="email-meta-row">
+            <span class="email-meta-label">Reply-To:</span>
+            <span class="email-meta-val">farmaciamatamourisca@gmail.com</span>
+          </div>
+          <div class="email-meta-row">
+            <span class="email-meta-label">Assunto:</span>
+            <span class="email-meta-val" id="modalEmailSubject" style="font-weight: 600;">-</span>
+          </div>
+        </div>
+
+        <div class="email-preview-frame" id="modalEmailBody">
+          A carregar conteúdo...
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('emailModal')">Fechar</button>
+        <button type="button" id="btnConfirmSend" class="btn btn-primary">🚀 Confirmar e Enviar Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Edição de Notas e Data de Reunião -->
+  <div id="notesModal" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="notesModalTitle">📝 Notas & Acompanhamento</h3>
+        <button type="button" class="modal-close" onclick="closeModal('notesModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editLeadId">
+        
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px;">Data Agendada para a Reunião Presencial:</label>
+          <input type="datetime-local" id="editMeetingDate" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px;">Histórico / Notas da Conversa com o Responsável:</label>
+          <textarea id="editNotes" rows="5" placeholder="Ex.: Falou com o Dr. António; têm 42 utentes em blister manual; pediu para ligar quinta-feira às 14h para fechar detalhes..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('notesModal')">Cancelar</button>
+        <button type="button" id="btnSaveNotes" class="btn btn-primary">💾 Guardar Notas</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const leadsTableBody = document.getElementById('leadsTableBody');
     const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
     const statsBadge = document.getElementById('statsBadge');
     const btnRefresh = document.getElementById('btnRefresh');
 
     let allLeads = [];
+    let currentPreviewLeadId = null;
 
-    async function loadLeads(search = '') {
+    // Carregar Métricas do Funil
+    async function loadStats() {
       try {
-        const url = search ? `/admin/api/leads?search=${encodeURIComponent(search)}` : '/admin/api/leads';
+        const res = await fetch('/admin/api/stats');
+        const data = await res.json();
+        if (data.success && data.stats) {
+          const s = data.stats;
+          document.getElementById('valTotal').textContent = s.total || 0;
+          document.getElementById('valPendente').textContent = s.pendente || 0;
+          document.getElementById('valEmail').textContent = s.email_enviado || 0;
+          document.getElementById('valChamada').textContent = s.chamada_efetuada || 0;
+          document.getElementById('valReuniao').textContent = s.reuniao_agendada || 0;
+          document.getElementById('valFechada').textContent = s.parceria_fechada || 0;
+        }
+      } catch (err) {
+        console.error('Erro ao carregar estatísticas:', err);
+      }
+    }
+
+    // Carregar Leads da API
+    async function loadLeads() {
+      try {
+        const search = searchInput.value.trim();
+        const status = statusFilter.value;
+
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (status && status !== 'Todos') params.append('status', status);
+
+        const url = `/admin/api/leads?${params.toString()}`;
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success) {
           allLeads = data.leads;
           renderTable(allLeads);
+          loadStats();
         } else {
-          leadsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Erro ao carregar dados: ${data.message}</td></tr>`;
+          leadsTableBody.innerHTML = `<tr><td colspan="8" class="empty-state">Erro: ${data.message}</td></tr>`;
         }
       } catch (err) {
-        leadsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Erro de ligação ao servidor.</td></tr>`;
+        leadsTableBody.innerHTML = `<tr><td colspan="8" class="empty-state">Erro de ligação ao servidor.</td></tr>`;
       }
     }
 
+    // Renderizar Tabela
     function renderTable(leads) {
-      statsBadge.textContent = `Total: ${leads.length} instituições`;
+      statsBadge.textContent = `${leads.length} instituições filtradas`;
 
       if (leads.length === 0) {
-        leadsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">Nenhum registo encontrado.</td></tr>`;
+        leadsTableBody.innerHTML = `<tr><td colspan="8" class="empty-state">Nenhum registo encontrado para os filtros selecionados.</td></tr>`;
         return;
       }
 
       leadsTableBody.innerHTML = leads.map(l => {
-        const date = new Date(l.created_at).toLocaleString('pt-PT');
+        const statusClass = (l.status || 'Pendente').replace(/\s+/g, '-');
+        const phoneClean = (l.phone || '').replace(/\D/g, '');
+        const whatsappMsg = encodeURIComponent(`Olá ${l.contact_name}! Fala Gilda Seomara Graça, das Farmácias F. da Silva Graça. Entro em contacto na sequência da visita de ${l.institution_name} ao nosso stand na feira.`);
+        const whatsappUrl = `https://wa.me/351${phoneClean}?text=${whatsappMsg}`;
+
+        const notesText = l.notes && l.notes.trim() ? escapeHtml(l.notes) : 'Sem notas (clique para adicionar)';
+        const notesPreview = l.notes && l.notes.trim() ? `📝 ${escapeHtml(l.notes.slice(0, 40))}${l.notes.length > 40 ? '...' : ''}` : '+ Adicionar nota';
+
+        const meetingDisplay = l.meeting_date 
+          ? `<strong style="color: #5b21b6;">📅 ${new Date(l.meeting_date).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</strong>`
+          : '<span style="color: #9ca3af; font-size: 11px;">Não agendada</span>';
+
+        const emailSentLabel = l.email_sent_at 
+          ? `<div style="font-size: 10px; color: #1e40af; margin-top: 3px;">Enviado: ${new Date(l.email_sent_at).toLocaleDateString('pt-PT')}</div>`
+          : '';
+
         return `
           <tr>
-            <td>${date}</td>
-            <td><strong>${escapeHtml(l.institution_name)}</strong></td>
-            <td>${escapeHtml(l.location)}</td>
-            <td>${escapeHtml(l.contact_name)}</td>
-            <td>${escapeHtml(l.role)}</td>
-            <td><a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a></td>
-            <td><a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a></td>
-            <td><span style="font-size: 12px; color: #6b7280;">${escapeHtml(l.primary_interest || 'Geral')}</span></td>
-            <td><span class="pin-badge">${escapeHtml(l.pin)}</span></td>
+            <td>
+              <strong>${escapeHtml(l.institution_name)}</strong>
+              <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(l.location)}</div>
+            </td>
+            <td>
+              <div style="font-weight: 600;">${escapeHtml(l.contact_name)}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(l.role)}</div>
+            </td>
+            <td>
+              <div><a href="mailto:${escapeHtml(l.email)}" style="color: #1f2937; text-decoration: none;">${escapeHtml(l.email)}</a></div>
+              <div><a href="tel:${escapeHtml(l.phone)}" style="color: var(--primary-dark); font-weight: 600; text-decoration: none;">📞 ${escapeHtml(l.phone)}</a></div>
+            </td>
+            <td>
+              <span style="font-size: 12px; color: #4b5563;">${escapeHtml(l.primary_interest || 'PIM')}</span>
+            </td>
+            <td>
+              <select class="status-select ${statusClass}" onchange="updateLeadStatus('${l.id}', this.value)">
+                <option value="Pendente" ${l.status === 'Pendente' ? 'selected' : ''}>⚪ Pendente</option>
+                <option value="Email Enviado" ${l.status === 'Email Enviado' ? 'selected' : ''}>🔵 Email Enviado</option>
+                <option value="Chamada Efetuada" ${l.status === 'Chamada Efetuada' ? 'selected' : ''}>🟡 Chamada Feita</option>
+                <option value="Reunião Agendada" ${l.status === 'Reunião Agendada' ? 'selected' : ''}>🟣 Reunião Agendada</option>
+                <option value="Parceria Fechada" ${l.status === 'Parceria Fechada' ? 'selected' : ''}>🟢 Parceria Fechada</option>
+                <option value="Não Interessado" ${l.status === 'Não Interessado' ? 'selected' : ''}>🔴 Não Interessado</option>
+              </select>
+              ${emailSentLabel}
+            </td>
+            <td>${meetingDisplay}</td>
+            <td>
+              <button type="button" class="notes-btn" onclick="openNotesModal('${l.id}', '${escapeAttr(l.institution_name)}', '${escapeAttr(l.notes || '')}', '${l.meeting_date || ''}')">
+                ${notesPreview}
+              </button>
+            </td>
+            <td>
+              <div class="quick-actions">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="openEmailPreview('${l.id}')" title="Pré-visualizar ou Enviar Email Formal">
+                  ✉️ Email
+                </button>
+                <a href="${whatsappUrl}" target="_blank" class="action-icon whatsapp" title="Conversar no WhatsApp">
+                  💬
+                </a>
+                <a href="tel:${escapeHtml(l.phone)}" class="action-icon" title="Ligar">
+                  📞
+                </a>
+              </div>
+            </td>
           </tr>
         `;
       }).join('');
     }
+
+    // Atualizar Estado da Lead
+    async function updateLeadStatus(id, newStatus) {
+      try {
+        const res = await fetch(`/admin/api/leads/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadStats();
+          loadLeads();
+        } else {
+          alert('Erro ao atualizar estado: ' + data.message);
+        }
+      } catch (err) {
+        alert('Erro de comunicação com o servidor.');
+      }
+    }
+
+    // Modal de Notas
+    function openNotesModal(id, institution, notes, meetingDate) {
+      document.getElementById('editLeadId').value = id;
+      document.getElementById('notesModalTitle').textContent = `📝 Notas — ${institution}`;
+      document.getElementById('editNotes').value = notes || '';
+      document.getElementById('editMeetingDate').value = meetingDate ? new Date(meetingDate).toISOString().slice(0, 16) : '';
+      openModal('notesModal');
+    }
+
+    document.getElementById('btnSaveNotes').addEventListener('click', async () => {
+      const id = document.getElementById('editLeadId').value;
+      const notes = document.getElementById('editNotes').value;
+      const meeting_date = document.getElementById('editMeetingDate').value || null;
+
+      try {
+        const res = await fetch(`/admin/api/leads/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ notes, meeting_date }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeModal('notesModal');
+          loadLeads();
+        } else {
+          alert('Erro ao guardar notas: ' + data.message);
+        }
+      } catch (err) {
+        alert('Erro ao ligar ao servidor.');
+      }
+    });
+
+    // Modal de Pré-visualização de Email
+    async function openEmailPreview(id) {
+      currentPreviewLeadId = id;
+      document.getElementById('modalEmailTo').textContent = 'A carregar...';
+      document.getElementById('modalEmailSubject').textContent = 'A carregar...';
+      document.getElementById('modalEmailBody').innerHTML = '<p>A preparar modelo de email...</p>';
+      openModal('emailModal');
+
+      try {
+        const res = await fetch(`/admin/api/leads/${id}/preview-email`);
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('modalEmailTo').textContent = `${data.lead.contact_name} <${data.lead.email}>`;
+          document.getElementById('modalEmailSubject').textContent = data.email.subject;
+          document.getElementById('modalEmailBody').innerHTML = data.email.html;
+        } else {
+          document.getElementById('modalEmailBody').innerHTML = `<p style="color: red;">Erro: ${data.message}</p>`;
+        }
+      } catch (err) {
+        document.getElementById('modalEmailBody').innerHTML = '<p style="color: red;">Erro ao contactar servidor.</p>';
+      }
+    }
+
+    // Botão Confirmar e Enviar Email
+    document.getElementById('btnConfirmSend').addEventListener('click', async () => {
+      if (!currentPreviewLeadId) return;
+
+      const confirmSend = confirm('Tem a certeza que deseja enviar agora o email formal de reunião para esta instituição?');
+      if (!confirmSend) return;
+
+      const btn = document.getElementById('btnConfirmSend');
+      btn.disabled = true;
+      btn.textContent = 'A enviar email...';
+
+      try {
+        const res = await fetch(`/admin/api/leads/${currentPreviewLeadId}/send-email`, {
+          method: 'POST',
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('✓ ' + data.message);
+          closeModal('emailModal');
+          loadLeads();
+        } else {
+          alert('Erro no envio do email: ' + data.message);
+        }
+      } catch (err) {
+        alert('Erro ao comunicar com o servidor.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Confirmar e Enviar Email';
+      }
+    });
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('is-open');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('is-open');
+    }
+
+    // Filtros de Cartões KPI
+    document.querySelectorAll('.kpi-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        const status = card.getAttribute('data-status');
+        statusFilter.value = status;
+        loadLeads();
+      });
+    });
+
+    statusFilter.addEventListener('change', () => {
+      document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+      loadLeads();
+    });
+
+    let searchTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(loadLeads, 300);
+    });
+
+    btnRefresh.addEventListener('click', loadLeads);
 
     function escapeHtml(text) {
       if (!text) return '';
@@ -263,18 +833,15 @@
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
     }
+    function escapeAttr(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '&quot;')
+        .replace(/\n/g, ' ');
+    }
 
-    let searchTimeout;
-    searchInput.addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        loadLeads(e.target.value);
-      }, 300);
-    });
-
-    btnRefresh.addEventListener('click', () => loadLeads(searchInput.value));
-
-    // Inicialização
+    // Carregamento inicial
     loadLeads();
   </script>
 </body>
