@@ -308,6 +308,7 @@ function generateMeetingProposalContent(lead) {
         <h3>Objetivos desta Reunião Técnica (duração prevista: 25 a 30 min):</h3>
         <ul>
           <li><strong>Apresentação do Circuito PIM (Preparação Individualizada da Medicação):</strong> Demonstração do sistema de embalagem selada/unidose e do seu impacto direto no aumento da segurança clínica e na poupança drástica de horas de enfermagem.</li>
+          <li><strong>Representação Oficial e Fornecimento de Fraldas Seni:</strong> Somos os representantes na zona da conceituada marca de produtos de incontinência e fraldas <strong>Seni</strong>, podendo igualmente apresentar uma proposta de fornecimento muito competitiva para a vossa instituição.</li>
           <li><strong>Levantamento Prático de Necessidades:</strong> Avaliação sem qualquer compromisso da realidade e volume de utentes da ${lead.institution_name}.</li>
           <li><strong>Proposta de Condições Especiais:</strong> Apresentação das condições de parceria, logística e apoio técnico farmacêutico continuado através da farmácia do nosso grupo mais conveniente para a vossa instituição.</li>
         </ul>
@@ -317,7 +318,7 @@ function generateMeetingProposalContent(lead) {
 
       <div class="cta-box">
         <p style="margin: 0 0 14px 0; font-weight: 600; color: #1f2937;">Pode responder diretamente a este email ou agendar por contacto direto:</p>
-        <a href="mailto:${replyTo}?subject=${encodeURIComponent(`Reunião Presencial - ${lead.institution_name}`)}&body=${encodeURIComponent(`Olá Dr.ª Gilda Seomara Graça,\n\nConfirmamos a disponibilidade da ${lead.institution_name} para a reunião presencial sobre o serviço de PIM.\n\nSugestão de dia e hora: \nContacto: ${lead.contact_name} (${lead.phone})\n\nCom os melhores cumprimentos,\n${lead.contact_name}`)}" class="cta-button">
+        <a href="mailto:${replyTo}?subject=${encodeURIComponent(`Reunião Presencial - ${lead.institution_name}`)}&body=${encodeURIComponent(`Olá Dr.ª Gilda Seomara Graça,\n\nConfirmamos a disponibilidade da ${lead.institution_name} para a reunião presencial sobre o serviço de PIM e fornecimento de fraldas Seni.\n\nSugestão de dia e hora: \nContacto: ${lead.contact_name} (${lead.phone})\n\nCom os melhores cumprimentos,\n${lead.contact_name}`)}" class="cta-button">
           ✉️ Responder e Indicar Disponibilidade
         </a>
       </div>
@@ -332,7 +333,7 @@ function generateMeetingProposalContent(lead) {
     </div>
     <div class="footer">
       <p><strong>Farmácias F. da Silva Graça</strong> (Farmácia Nova da Vila &bull; Farmácia Ilha &bull; Farmácia Colmeias &bull; Farmácia Souto da Carpalhosa)<br>
-      Soluções Farmacêuticas e Apoio Técnico Especializado para Lares e ERPI.<br>
+      Soluções Farmacêuticas, Circuito PIM e Representante de Fraldas Seni para Lares e ERPI.<br>
       Contacto enviado no seguimento da visita e participação no nosso stand da feira.</p>
     </div>
   </div>
@@ -350,8 +351,9 @@ Na sequência desse nosso contacto e do interesse manifestado nas nossas soluç�
 
 Objetivo da Reunião Técnica:
 1. Apresentar o nosso circuito certificado de PIM (unidose/blister selado) e a redução drástica de tempo de enfermagem;
-2. Conhecer as necessidades específicas dos utentes da ${lead.institution_name};
-3. Avaliar, sem compromisso, uma proposta de condições de fornecimento e apoio farmacêutico dedicado através da farmácia do nosso grupo mais próxima da vossa instituição.
+2. Representação de Fraldas Seni: Somos os representantes na zona das conceituadas fraldas Seni e podemos também apresentar uma proposta de fornecimento muito vantajosa para a vossa instituição;
+3. Conhecer as necessidades específicas dos utentes da ${lead.institution_name};
+4. Avaliar, sem compromisso, uma proposta de condições de fornecimento e apoio farmacêutico dedicado através da farmácia do nosso grupo mais próxima da vossa instituição.
 
 Poderá responder diretamente a este email indicando a vossa melhor disponibilidade ou contactar-me pelo telefone +351 966 596 267.
 
